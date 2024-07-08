@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stopwatch Web Application</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f0f0f0;
+        }
+        .stopwatch {
+            text-align: center;
+        }
+        .time {
+            font-size: 3em;
+            margin-bottom: 20px;
+        }
+        .buttons button {
+            font-size: 1em;
+            padding: 10px 20px;
+            margin: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="stopwatch">
+        <div class="time" id="display">00:00:00</div>
+        <div class="buttons">
+            <button onclick="start()">Start</button>
+            <button onclick="pause()">Pause</button>
+            <button onclick="reset()">Reset</button>
+            <button onclick="lap()">Lap</button>
+        </div>
+        <div id="laps"></div>
+    </div>
+
+    <script>
+        let timer;
+        let startTime;
+        let elapsedTime = 0;
+        let running = false;
+
+        function start() {
+            if (!running) {
+                startTime = Date.now() - elapsedTime;
+                timer = setInterval(updateTime, 1000);
+                running = true;
+            }
+        }
+
+        function pause() {
+            if (running) {
+                clearInterval(timer);
+                elapsedTime = Date.now() - startTime;
+                running = false;
+            }
+        }
+
+        function reset() {
+            clearInterval(timer);
+            elapsedTime = 0;
+            running = false;
+            document.getElementById('display').textContent = '00:00:00';
+            document.getElementById('laps').innerHTML = '';
+        }
+
+        function lap() {
+            if (running) {
+                const lapTime = new Date(Date.now() - startTime);
+                const minutes = String(lapTime.getUTCMinutes()).padStart(2, '0');
+                const seconds = String(lapTime.getUTCSeconds()).padStart(2, '0');
+                const lapRecord = `${minutes}:${seconds}`;
+                const lapElement = document.createElement('div');
+                lapElement.textContent = lapRecord;
+                document.getElementById('laps').appendChild(lapElement);
+            }
+        }
+
+        function updateTime() {
+            const currentTime = Date.now();
+            const timeElapsed = new Date(currentTime - startTime);
+            const minutes = String(timeElapsed.getUTCMinutes()).padStart(2, '0');
+            const seconds = String(timeElapsed.getUTCSeconds()).padStart(2, '0');
+            document.getElementById('display').textContent = `${minutes}:${seconds}`;
+        }
+    </script>
+</body>
+</html>
